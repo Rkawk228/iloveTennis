@@ -1,6 +1,6 @@
 package com.hoyong.ilote.match;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class RequiredThings {

@@ -1,8 +1,7 @@
 package com.hoyong.ilote.sample.oneToone;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
 
 @Entity
 public class OneClass {

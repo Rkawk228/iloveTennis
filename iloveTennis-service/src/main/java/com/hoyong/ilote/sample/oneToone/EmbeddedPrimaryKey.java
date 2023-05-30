@@ -1,10 +1,10 @@
 package com.hoyong.ilote.sample.oneToone;
 
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @NoArgsConstructor

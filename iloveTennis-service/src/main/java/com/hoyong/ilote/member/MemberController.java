@@ -1,5 +1,6 @@
 package com.hoyong.ilote.member;
 
+import com.hoyong.ilote.core.response.ResponseBase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import java.util.List;
  *
  */
 @RestController
-@RequestMapping(value = "/api/member")
+@RequestMapping(value = "/v1/api/member")
 @Slf4j
 @RequiredArgsConstructor
 public class MemberController {
@@ -21,9 +22,9 @@ public class MemberController {
 
     // 생성
     @PostMapping("/")
-    public ResponseEntity<?> saveMember(@RequestBody Member member) {
+    public ResponseBase<Member> saveMember(@RequestBody Member member) {
         Member savedMember = memberRepository.save(member);
-        return ResponseEntity.ok(savedMember);
+        return ResponseBase.of(savedMember);
     }
 
     // 목록 조회
@@ -34,15 +35,16 @@ public class MemberController {
 
     // 단건 조회
     @GetMapping("/{id}")
-    public Member getMember(@PathVariable Long id) {
-        return memberRepository.findById(id)
+    public ResponseBase<Member> getMember(@PathVariable Long id) {
+        Member result = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("illegal argument :" + id));
+        return ResponseBase.of(result);
     }
 
     // 수정
     @PutMapping("/{id}")
-    public Member updateMember(@PathVariable Long id, @RequestBody Member newMember) {
-        return memberRepository.findById(id)
+    public ResponseBase<Member> updateMember(@PathVariable Long id, @RequestBody Member newMember) {
+        Member result = memberRepository.findById(id)
                 .map(member -> {
                     member.setUserName(newMember.getUserName());
                     return memberRepository.save(newMember);
@@ -51,6 +53,7 @@ public class MemberController {
                     newMember.setId(id);
                     return memberRepository.save(newMember);
                 });
+        return ResponseBase.of(result);
     }
 
     // 삭제

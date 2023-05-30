@@ -9,13 +9,13 @@ import java.util.Objects;
 @Data
 public class ResponseBase<T> {
     protected String code = "00";
-    protected String message = "SUCCESS";
+    protected String statusText = "SUCCESS";
     protected String timestamp;
     private int status = 200;
-    protected T result;
+    protected T data;
 
     protected ResponseBase() {
-        this.result = null;
+        this.data = null;
     }
 
     protected ResponseBase(final T value) {
@@ -24,7 +24,7 @@ public class ResponseBase<T> {
         String time = simpleDateFormat.format(new Date());
 
         this.timestamp = time;
-        this.result = Objects.requireNonNull(value);
+        this.data = Objects.requireNonNull(value);
     }
 
     public static <T> ResponseBase<T> success() {
@@ -35,11 +35,11 @@ public class ResponseBase<T> {
         return new ResponseBase<>(result);
     }
 
-    public static <T> ResponseBase<T> error(final int status,final String code,final String message,final String timestamp){
+    public static <T> ResponseBase<T> error(final int status,final String code,final String statusText,final String timestamp){
         ResponseBase<T> res = new ResponseBase<>();
         res.setCode(code);
         res.setTimestamp(timestamp);
-        res.setMessage(message);
+        res.setStatusText(statusText);
         res.setStatus(status);
         return res;
     }

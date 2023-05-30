@@ -2,16 +2,19 @@ package com.hoyong.ilote.login;
 
 import com.hoyong.ilote.exception.BusinessException;
 import com.hoyong.ilote.jwt.JwtServiceImp;
+import com.hoyong.ilote.member.LoginUser;
 import com.hoyong.ilote.member.Member;
 import com.hoyong.ilote.member.MemberRepository;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -22,7 +25,9 @@ public class LoginService {
 
     private final MemberRepository memberRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    private final RedisTemplate redisTemplate;
+
+//    private final PasswordEncoder passwordEncoder;
 
     public String getKakaoSSO (String authorize_code) {
         String access_Token = "";
@@ -82,22 +87,24 @@ public class LoginService {
     }
 
     @Transactional
-    public Member loginUser(Member memberParam) {
-        String userId = memberParam.getUserId();
+    public Member loginUser(HttpSession session, LoginUser loginUser) {
+        String userId = loginUser.getUserId();
+        String password = loginUser.getPassword();
+        String sessionId = session.getId();
 
-        Member member = memberRepository.findByUserIdAndPassword(userId,memberParam.getPassword()).orElseThrow(() -> new NoSuchElementException("잘못된 유저"));
-        if(passwordEncoder.matches(memberParam.getPassword(),member.getPassword())){
-            member.setAccessToken(jwtServiceImp.createAccessToken(userId)); // TODO : 추후 Redis로
-        }else{
-            throw new BusinessException("비밀번호가 일치하지 않습니다.");
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new BusinessException("ER0001","존재하지 않은 ID 입니다."));
+
+        if(!loginUser.getPassword().equals(member.getPassword())){
+            throw new BusinessException("ER0002","비밀번호가 일치하지 않습니다.");
         }
-        memberRepository.save(member);
+
+        session.setAttribute(sessionId,member);
         return member;
     }
 
     @Transactional
     public Member signUpMember(Member member) {
-        member.encodePassword(passwordEncoder);
+//        member.encodePassword(passwordEncoder);
         memberRepository.save(member);
         return member;
     }

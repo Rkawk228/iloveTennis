@@ -22,14 +22,28 @@ spring:
     rest:
       base-path: /api
 
-springdoc:
-  api-docs:
-    path: /api-docs
-    groups:
-      enable: true
-  swagger-ui:
-    operations-sorter: alpha
-    tags-sorter: alpha
-    path: /swagger-ui.html
-    disable-swagger-default-url: true
-    display-query-params-without-oauth2: true
+  session:
+    store-type: redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: Rkawk1685$
+    lettuce:
+      pool:
+        max-active: 20 #기본값 8
+        max-idle: 20  #기본값 8
+        max-wait: -1ms #기본값 -1ms, 풀에서 커넥션 얻을때까지 대기 시간, 음수면 무기한
+        min-idle: 6 #기본값 0, time-between-eviction-runs있을때만 유효
+      shutdown-timeout: 100ms #유휴 커넥션을 제거하는 스레드의 실행 간격
+
+#springdoc:
+#  api-docs:
+#    path: /api-docs
+#    groups:
+#      enable: true
+#  swagger-ui:
+#    operations-sorter: alpha
+#    tags-sorter: alpha
+#    path: /swagger-ui.html
+#    disable-swagger-default-url: true
+#    display-query-params-without-oauth2: true

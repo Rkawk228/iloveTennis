@@ -1,6 +1,7 @@
 package com.hoyong.ilote.stadium;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity

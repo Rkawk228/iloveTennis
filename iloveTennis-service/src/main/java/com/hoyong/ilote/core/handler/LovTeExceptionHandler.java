@@ -6,17 +6,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoyong.ilote.core.response.ResponseBase;
 import com.hoyong.ilote.exception.BusinessException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,11 +36,12 @@ public class LovTeExceptionHandler {
      * @return
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseBase<Object> handleIllegalArgumentException(MethodArgumentNotValidException me) {
-        String errCd = "COM004";
+    protected ResponseBase<Object> handleIllegalArgumentException(MethodArgumentNotValidException e) {
+        log.info("MethodArgumentNotValidException.class {} ",e);
+        String errCd = "000004";
         String timestamp = getTimestamp();
 
-        return ResponseBase.error(HttpStatus.NOT_FOUND.value(),errCd,makeValidationMsg(me.getBindingResult()),timestamp);
+        return ResponseBase.error(HttpStatus.NOT_FOUND.value(),errCd,makeValidationMsg(e.getBindingResult()),timestamp);
     }
 
     /**
@@ -52,7 +52,8 @@ public class LovTeExceptionHandler {
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseBase<Object> handleNotFoundError(NoHandlerFoundException e, HttpServletRequest request){
-        String errCd = "COM002";
+        log.info ("NoHandlerFoundException.class {} ",e);
+        String errCd = "000002";
         String timestamp = ExceptionLogPrint(e,request,errCd);
         return ResponseBase.error(HttpStatus.NOT_FOUND.value(),errCd,e.getMessage(),timestamp);
     }
@@ -67,7 +68,8 @@ public class LovTeExceptionHandler {
      */
     @ExceptionHandler(NullPointerException.class)
     public ResponseBase<Object> NullPointerException(Exception e, HttpServletRequest request){
-        String errCd = "COM001";
+        log.info ("NullPointerException.class {} ",e);
+        String errCd = "000001";
         String message = "java.lang.NullPointerException: null";
         String timestamp = getTimestamp();
         return ResponseBase.error(HttpStatus.INTERNAL_SERVER_ERROR.value(),errCd,message,timestamp);
@@ -81,7 +83,7 @@ public class LovTeExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseBase<Object> handleBusinessException(final BusinessException e,HttpServletRequest request){
-
+        log.info ("BusinessException.class {} ",e);
         String errCd = e.getErrCd();
         String message = e.getMsg();
         String timestamp = getTimestamp();
@@ -98,7 +100,8 @@ public class LovTeExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseBase<Object> handleException(Exception e, HttpServletRequest request){
-        String errCd = "COM001";
+        log.info ("Exception.class {} ",e);
+        String errCd = "000001";
         String timestamp = getTimestamp();
         return ResponseBase.error(HttpStatus.INTERNAL_SERVER_ERROR.value(),errCd,e.getMessage(),timestamp);
     }

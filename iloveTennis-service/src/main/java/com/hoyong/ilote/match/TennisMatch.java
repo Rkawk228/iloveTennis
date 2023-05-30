@@ -2,9 +2,11 @@ package com.hoyong.ilote.match;
 
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-
-import javax.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Data;
 
 /**
  * 사람찾는데에 대한 상세정보
